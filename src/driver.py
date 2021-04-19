@@ -141,7 +141,10 @@ class MimicDriver (ResourceDriverInterface):
         :param CancellationContext cancellation_context:
         :return:
         """
-        pass
+        vm_details = []
+        for request in requests[u'items']:
+            vm_details.append(VmDetailsData(appName=request[u'deployedAppJson'][u'name']))
+        return DriverResponse(vm_details).to_driver_response_json()
 
     # </editor-fold>
 
