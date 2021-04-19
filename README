@@ -1,0 +1,1 @@
+docker run --rm -it -p 22:2222 -e PUID=1000 -e PGID=1000 -e TZ=Europe/London -e USER_NAME=admin -e USER_PASSWORD=admin -e PASSWORD_ACCESS=true linuxserver/openssh-server

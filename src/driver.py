@@ -4,6 +4,7 @@ from cloudshell.cp.core.models import DriverResponse,DeployAppResult, DeployApp,
 from cloudshell.shell.core.driver_context import InitCommandContext, AutoLoadCommandContext, ResourceCommandContext, \
     AutoLoadAttribute, AutoLoadDetails, CancellationContext, ResourceRemoteCommandContext
 import uuid
+import json
 from coolname import generate_slug
 
 
@@ -141,10 +142,11 @@ class MimicDriver (ResourceDriverInterface):
         :param CancellationContext cancellation_context:
         :return:
         """
+        requests = json.loads(requests)
         vm_details = []
         for request in requests[u'items']:
             vm_details.append(VmDetailsData(appName=request[u'deployedAppJson'][u'name']))
-        return DriverResponse(vm_details).to_driver_response_json()
+        return json.dumps(vm_details, default=lambda o: o.__dict__, sort_keys=True, separators=(',', ':'))
 
     # </editor-fold>
 
