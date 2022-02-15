@@ -3,6 +3,7 @@ from cloudshell.shell.core.resource_driver_interface import ResourceDriverInterf
 from cloudshell.cp.core.models import *
 from cloudshell.shell.core.driver_context import InitCommandContext, AutoLoadCommandContext, ResourceCommandContext, \
     AutoLoadAttribute, AutoLoadDetails, CancellationContext, ResourceRemoteCommandContext
+from cloudshell.shell.core.session.logging_session import LoggingSessionContext
 import uuid
 import json
 from coolname import generate_slug
@@ -208,19 +209,21 @@ class MimicDriver (ResourceDriverInterface):
         :return: a json object with the list of connectivity changes which were carried out by the driver
         :rtype: str
         """
-        actions = self.request_parser.convert_driver_request_to_actions(request)
+        with LoggingSessionContext(context) as logger:
+            logger.warn('ApplyConnectivityChanges')
+            actions = self.request_parser.convert_driver_request_to_actions(request)
 
-        remove_vlan_actions = filter(lambda x: isinstance(x, RemoveVlan), actions)
-        remove_results = []
-        for r in remove_vlan_actions:
-            remove_results.append(RemoveVlanResult(actionId=r.actionId, success=True))
+            remove_vlan_actions = filter(lambda x: isinstance(x, RemoveVlan), actions)
+            remove_results = []
+            for r in remove_vlan_actions:
+                remove_results.append(RemoveVlanResult(actionId=r.actionId, success=True))
 
-        set_vlan_actions = filter(lambda x: isinstance(x, SetVlan), actions)
-        set_results = []
-        for s in set_vlan_actions:
-            remove_results.append(SetVlanResult(actionId=s.actionId, success=True))
+            set_vlan_actions = filter(lambda x: isinstance(x, SetVlan), actions)
+            set_results = []
+            for s in set_vlan_actions:
+                remove_results.append(SetVlanResult(actionId=s.actionId, success=True))
 
-        return DriverResponse(remove_results + set_results).to_driver_response_json()
+            return DriverResponse(remove_results + set_results).to_driver_response_json()
 
     # </editor-fold> 
 
