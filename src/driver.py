@@ -216,12 +216,14 @@ class MimicDriver (ResourceDriverInterface):
             remove_vlan_actions = filter(lambda x: isinstance(x, RemoveVlan), actions)
             remove_results = []
             for r in remove_vlan_actions:
-                remove_results.append(RemoveVlanResult(actionId=r.actionId, success=True))
+                res = RemoveVlanResult(actionId=r.actionId, success=True)
+                res.updatedInterface = r.connectorAttributes['Interface']
+                remove_results.append(res)
 
             set_vlan_actions = filter(lambda x: isinstance(x, SetVlan), actions)
             set_results = []
             for s in set_vlan_actions:
-                remove_results.append(SetVlanResult(actionId=s.actionId, success=True))
+                remove_results.append(SetVlanResult(actionId=s.actionId, success=True, updatedInterface=str(uuid.uuid4())))
 
             return DriverResponse(remove_results + set_results).to_driver_response_json()
 
